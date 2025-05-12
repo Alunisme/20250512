@@ -22,8 +22,13 @@ function gotResults(results) {
 
 function draw() {
   background(220);
+  // 鏡像翻轉，讓臉部定位與畫面一致
+  push();
+  translate(width, 0);
+  scale(-1, 1);
   image(video, 0, 0, width, height);
   drawFaceMesh();
+  pop();
 }
 
 function drawFaceMesh() {
@@ -36,7 +41,7 @@ function drawFaceMesh() {
     for (let i = 0; i < indices.length; i++) {
       const idx = indices[i];
       const [x, y] = keypoints[idx];
-      vertex(x, y);
+      vertex(width - x, y); // x座標鏡像
     }
     endShape(CLOSE);
   }
