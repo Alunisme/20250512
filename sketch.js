@@ -40,8 +40,10 @@ function drawFaceMesh() {
     beginShape();
     for (let i = 0; i < indices.length; i++) {
       const idx = indices[i];
-      const [x, y] = keypoints[idx];
-      vertex(width - x, y); // x座標鏡像
+      if (keypoints[idx]) {
+        // 直接用 keypoints 的 x, y，不做 width-x 鏡像
+        vertex(keypoints[idx][0], keypoints[idx][1]);
+      }
     }
     endShape(CLOSE);
   }
