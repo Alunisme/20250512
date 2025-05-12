@@ -30,36 +30,36 @@ function draw() {
 function drawFaceMesh() {
   if (predictions.length > 0) {
     const keypoints = predictions[0].scaledMesh;
-    // 計算所有點的中心點
-    let sumX = 0, sumY = 0, count = 0;
-    for (let i = 0; i < indices.length; i++) {
-      const idx = indices[i];
-      if (keypoints[idx]) {
-        sumX += keypoints[idx][0];
-        sumY += keypoints[idx][1];
-        count++;
-      }
+
+    // 嘴唇（原本的 indices）
+    drawMeshLine(keypoints, [409,270,269,267,0,37,39,40,185,61,146,91,181,84,17,314,405,321,375,291]);
+
+    // 左眼外部
+    drawMeshLine(keypoints, [243,190,56,28,27,29,30,247,130,25,110,24,23,22,26,112], true);
+    // 左眼內部
+    drawMeshLine(keypoints, [133,173,157,158,159,160,161,246,33,7,163,144,145,153,154,155], true);
+    // 右眼外部
+    drawMeshLine(keypoints, [359,467,260,259,257,258,286,444,463,341,256,252,253,254,339,255], true);
+    // 右眼內部
+    drawMeshLine(keypoints, [263,466,388,387,386,385,384,398,362,382,381,380,374,373,390,249], true);
+  }
+}
+
+function drawMeshLine(keypoints, arr, closeShape = true) {
+  stroke(255, 0, 0);
+  strokeWeight(5);
+  noFill();
+  beginShape();
+  for (let i = 0; i < arr.length; i++) {
+    const idx = arr[i];
+    if (keypoints[idx]) {
+      vertex(keypoints[idx][0], keypoints[idx][1]);
     }
-    if (count === 0) return;
-    const centerX = sumX / count;
-    const centerY = sumY / count;
-    // 計算畫布中心
-    const canvasCenterX = width / 2;
-    const canvasCenterY = height / 2;
-    // 將線條平移到畫布中心
-    stroke(255, 0, 0);
-    strokeWeight(5);
-    noFill();
-    beginShape();
-    for (let i = 0; i < indices.length; i++) {
-      const idx = indices[i];
-      if (keypoints[idx]) {
-        const x = keypoints[idx][0] - centerX + canvasCenterX;
-        const y = keypoints[idx][1] - centerY + canvasCenterY;
-        vertex(x, y);
-      }
-    }
+  }
+  if (closeShape) {
     endShape(CLOSE);
+  } else {
+    endShape();
   }
 }
 
