@@ -22,8 +22,26 @@ function gotResults(results) {
 
 function draw() {
   background(220);
-  // 直接顯示 video，不做鏡像翻轉
   image(video, 0, 0, width, height);
+  let mouthOpen = false;
+  let mouthX = 0, mouthY = 0;
+  if (predictions.length > 0) {
+    const keypoints = predictions[0].scaledMesh;
+    // 上下唇中心點（0:上唇, 17:下唇）
+    const upperLip = keypoints[0];
+    const lowerLip = keypoints[17];
+    if (upperLip && lowerLip) {
+      const d = dist(upperLip[0], upperLip[1], lowerLip[0], lowerLip[1]);
+      mouthX = (upperLip[0] + lowerLip[0]) / 2;
+      mouthY = (upperLip[1] + lowerLip[1]) / 2;
+      if (d > 30) { // 距離閾值可依實際需求調整
+        mouthOpen = true;
+      }
+    }
+    if (mouthOpen) {
+      drawFlame(mouthX, mouthY);
+    }
+  }
   drawFaceMesh();
 }
 
@@ -61,6 +79,18 @@ function drawMeshLine(keypoints, arr, closeShape = true, col = color(255,0,0)) {
   } else {
     endShape();
   }
+}
+
+function drawFlame(x, y) {
+  push();
+  noStroke();
+  for (let i = 0; i < 10; i++) {
+    fill(255, 140 + random(-20, 20), 0, 150 - i*10);
+    ellipse(x + random(-10, 10), y + 40 + i*10 + random(-5, 5), 40 - i*3, 30 - i*2);
+  }
+  fill(255, 255, 100, 180);
+  ellipse(x + random(-5, 5), y + 50 + random(-5, 5), 15, 10);
+  pop();
 }
 
 function windowResized() {
