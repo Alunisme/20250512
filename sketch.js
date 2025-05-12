@@ -30,28 +30,23 @@ function draw() {
 function drawFaceMesh() {
   if (predictions.length > 0) {
     const keypoints = predictions[0].scaledMesh;
-    // 取得臉部所有點的包圍盒
-    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    // 計算所有點的中心點
+    let sumX = 0, sumY = 0, count = 0;
     for (let i = 0; i < indices.length; i++) {
       const idx = indices[i];
       if (keypoints[idx]) {
-        const [x, y] = keypoints[idx];
-        if (x < minX) minX = x;
-        if (y < minY) minY = y;
-        if (x > maxX) maxX = x;
-        if (y > maxY) maxY = y;
+        sumX += keypoints[idx][0];
+        sumY += keypoints[idx][1];
+        count++;
       }
     }
-    if (minX === Infinity) return;
-    // 臉部中心點
-    const faceCenterX = (minX + maxX) / 2;
-    const faceCenterY = (minY + maxY) / 2;
-    // 畫布中心
+    if (count === 0) return;
+    const centerX = sumX / count;
+    const centerY = sumY / count;
+    // 計算畫布中心
     const canvasCenterX = width / 2;
     const canvasCenterY = height / 2;
-    // 平移量
-    const offsetX = canvasCenterX - faceCenterX;
-    const offsetY = canvasCenterY - faceCenterY;
+    // 將線條平移到畫布中心
     stroke(255, 0, 0);
     strokeWeight(5);
     noFill();
@@ -59,8 +54,8 @@ function drawFaceMesh() {
     for (let i = 0; i < indices.length; i++) {
       const idx = indices[i];
       if (keypoints[idx]) {
-        const x = keypoints[idx][0] + offsetX;
-        const y = keypoints[idx][1] + offsetY;
+        const x = keypoints[idx][0] - centerX + canvasCenterX;
+        const y = keypoints[idx][1] - centerY + canvasCenterY;
         vertex(x, y);
       }
     }
