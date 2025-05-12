@@ -4,9 +4,9 @@ let predictions = [];
 const indices = [409,270,269,267,0,37,39,40,185,61,146,91,181,84,17,314,405,321,375,291];
 
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(windowWidth, windowHeight);
   video = createCapture(VIDEO);
-  video.size(width, height);
+  video.size(windowWidth, windowHeight);
   video.hide();
   facemesh = ml5.facemesh(video, modelReady);
   facemesh.on('predict', gotResults);
@@ -45,4 +45,9 @@ function drawFaceMesh() {
     }
     endShape(CLOSE);
   }
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  video.size(windowWidth, windowHeight);
 }
