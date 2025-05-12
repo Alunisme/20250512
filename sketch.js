@@ -22,13 +22,9 @@ function gotResults(results) {
 
 function draw() {
   background(220);
-  // 鏡像翻轉，讓臉部定位與畫面一致
-  push();
-  translate(width, 0);
-  scale(-1, 1);
+  // 直接顯示 video，不做鏡像翻轉
   image(video, 0, 0, width, height);
   drawFaceMesh();
-  pop();
 }
 
 function drawFaceMesh() {
@@ -41,7 +37,6 @@ function drawFaceMesh() {
     for (let i = 0; i < indices.length; i++) {
       const idx = indices[i];
       if (keypoints[idx]) {
-        // 直接用 keypoints 的 x, y，不做 width-x 鏡像
         vertex(keypoints[idx][0], keypoints[idx][1]);
       }
     }
